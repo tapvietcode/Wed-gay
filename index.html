@@ -1,0 +1,66 @@
+<script>
+(function() {
+    // 1. Create floating HTML UI
+    const uiDiv = document.createElement('div');
+    uiDiv.id = 'auto-clicker-ui';
+    uiDiv.innerHTML = `
+        <div style="position: fixed; top: 20px; right: 20px; z-index: 999999; background: #1e1e1e; color: #fff; padding: 15px; border-radius: 8px; font-family: Arial, sans-serif; box-shadow: 0 4px 12px rgba(0,0,0,0.5); width: 220px;">
+            <h4 style="margin: 0 0 10px 0; font-size: 14px; text-align: center; color: #4CAF50;">Web Auto Clicker</h4>
+            
+            <label style="font-size: 12px; display: block; margin-bottom: 6px;">X Coordinate (px):
+                <input type="number" id="ac-x" value="500" style="width: 100%; padding: 4px; margin-top: 2px; border-radius: 4px; border: 1px solid #444; background: #333; color: #fff;">
+            </label>
+            
+            <label style="font-size: 12px; display: block; margin-bottom: 6px;">Y Coordinate (px):
+                <input type="number" id="ac-y" value="300" style="width: 100%; padding: 4px; margin-top: 2px; border-radius: 4px; border: 1px solid #444; background: #333; color: #fff;">
+            </label>
+            
+            <label style="font-size: 12px; display: block; margin-bottom: 10px;">Interval (ms):
+                <input type="number" id="ac-delay" value="1000" style="width: 100%; padding: 4px; margin-top: 2px; border-radius: 4px; border: 1px solid #444; background: #333; color: #fff;">
+            </label>
+            
+            <button id="ac-start-btn" style="width: 100%; background: #4CAF50; color: white; border: none; padding: 8px; border-radius: 4px; cursor: pointer; font-weight: bold; margin-bottom: 6px;">Start</button>
+            <button id="ac-stop-btn" style="width: 100%; background: #f44336; color: white; border: none; padding: 8px; border-radius: 4px; cursor: pointer; font-weight: bold;">Stop</button>
+            
+            <p id="ac-status" style="font-size: 11px; margin: 8px 0 0 0; color: #aaa; text-align: center;">Status: Ready</p>
+        </div>
+    `;
+    document.body.appendChild(uiDiv);
+
+    // 2. Auto click logic
+    let clickTimer = null;
+
+    document.getElementById('ac-start-btn').onclick = function() {
+        if (clickTimer) return;
+
+        const x = parseInt(document.getElementById('ac-x').value);
+        const y = parseInt(document.getElementById('ac-y').value);
+        const delay = parseInt(document.getElementById('ac-delay').value);
+
+        const statusText = document.getElementById('ac-status');
+        statusText.innerText = 'Status: RUNNING...';
+        statusText.style.color = '#4CAF50';
+
+        clickTimer = setInterval(() => {
+            // Perform background click at coordinate (X, Y)
+            let elem = document.elementFromPoint(x, y);
+            if (elem) {
+                elem.click();
+                console.log(`[AutoClick] Clicked at (${x}, ${y})`);
+            } else {
+                console.log(`[AutoClick] No element found at (${x}, ${y})`);
+            }
+        }, delay);
+    };
+
+    document.getElementById('ac-stop-btn').onclick = function() {
+        if (clickTimer) {
+            clearInterval(clickTimer);
+            clickTimer = null;
+            const statusText = document.getElementById('ac-status');
+            statusText.innerText = 'Status: STOPPED';
+            statusText.style.color = '#f44336';
+        }
+    };
+})();
+</script>
